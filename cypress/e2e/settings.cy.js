@@ -1,11 +1,10 @@
-/* eslint-disable max-len */
-/* eslint-disable cypress/unsafe-to-chain-command */
-// eslint-disable cypress/unsafe-to-chain-command
-// eslint-disable max-len
 /// <reference types="cypress" />
 /// <reference types="../support" />
 
+import { SettingsPage } from '../support/pages/SettingsPage';
+
 describe('Settings page', () => {
+  const settingsPage = new SettingsPage();
   let email;
 
   beforeEach(() => {
@@ -26,46 +25,43 @@ describe('Settings page', () => {
     cy.get('input[placeholder="Password"]').type('1234567Qwerty');
     cy.contains('button', 'Sign in').click();
     cy.location('pathname', { timeout: 10000 }).should('not.include', '/login');
-    cy.visit('/settings');
+
+    settingsPage.visit();
   });
 
-  it('should provide an ability to update username', () => {
-    cy.get('input[placeholder="Username"]').clear().type('superQA_user');
-    cy.get('input[placeholder="Email"]').clear().type(email);
-    cy.get('input[placeholder="New Password"]').clear().type('1234567Qwerty');
-    cy.contains('button', 'Update Settings').click();
+  it('should update username', () => {
+    settingsPage.getUsernameInput().clear().type('superQA_user');
+    settingsPage.getEmailInput().clear().type(email);
+    settingsPage.getPasswordInput().clear().type('1234567Qwerty');
+    settingsPage.getUpdateButton().click();
   });
 
-  it('should provide an ability to update bio', () => {
-    cy.get('textarea[placeholder="Short bio about you"]').clear().type('I am the king of Cypress!');
-    cy.get('input[placeholder="Username"]').clear().type('superQA_user');
-    cy.get('input[placeholder="Email"]').clear().type(email);
-    cy.get('input[placeholder="New Password"]').clear().type('1234567Qwerty');
-    cy.contains('button', 'Update Settings').click();
+  it('should update bio', () => {
+    settingsPage.getBioTextarea().clear().type('I am the king of Cypress!');
+    settingsPage.getUsernameInput().clear().type('superQA_user');
+    settingsPage.getEmailInput().clear().type(email);
+    settingsPage.getPasswordInput().clear().type('1234567Qwerty');
+    settingsPage.getUpdateButton().click();
   });
 
-  it('should provide an ability to update an email', () => {
-    cy.get('input[placeholder="Email"]').clear().type(`superqa_test_${Date.now()}@gmail.com`);
-    cy.get('input[placeholder="Username"]').clear().type('superQA_user');
-    cy.get('input[placeholder="New Password"]').clear().type('1234567Qwerty');
-    cy.contains('button', 'Update Settings').click();
+  it('should update email', () => {
+    settingsPage.getEmailInput().clear().type(`superqa_test_${Date.now()}@gmail.com`);
+    settingsPage.getUsernameInput().clear().type('superQA_user');
+    settingsPage.getPasswordInput().clear().type('1234567Qwerty');
+    settingsPage.getUpdateButton().click();
   });
 
-  it('should provide an ability to update password', () => {
-    cy.get('input[placeholder="New Password"]').type('MegaSecret123!');
-    cy.get('input[placeholder="Username"]').clear().type('superQA_user');
-    cy.get('input[placeholder="Email"]').clear().type(email);
-    cy.contains('button', 'Update Settings').click();
+  it('should update password', () => {
+    settingsPage.getPasswordInput().type('MegaSecret123!');
+    settingsPage.getUsernameInput().clear().type('superQA_user');
+    settingsPage.getEmailInput().clear().type(email);
+    settingsPage.getUpdateButton().click();
   });
 
-it('should provide an ability to log out', () => {
-  cy.contains('button', 'Or click here to logout.').click();
+  it('should log out', () => {
+    settingsPage.getLogoutButton().click();
 
-  cy.url({ timeout: 10000 }).should('eq', 'http://localhost:3000/');
-
-  // Перевірка наявності кнопки Sign in після logout
-  cy.contains('a', 'Sign in').should('be.visible');
-});
-
-
+    cy.url({ timeout: 10000 }).should('eq', 'http://localhost:3000/');
+    cy.contains('a', 'Sign in').should('be.visible');
+  });
 });
